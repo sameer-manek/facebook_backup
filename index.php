@@ -3,6 +3,10 @@
 	<head>
 		<title>facebook tool</title>
 
+		<!-- JQuery -->
+
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
 		<!-- facebook JS SDK -->
 
 		<script>
@@ -17,15 +21,26 @@
 		    FB.AppEvents.logPageView();
 		   	
 		   	FB.getLoginStatus(function(response){
-		   		// if not logged in display the login button
-		   		if(response.status == "connected"){
-		   			document.write("connected");
-		   		} else{
-		   			document.write('not connected');
+		   		if(response.status == 'connected'){
+		   			token = response.authResponse.accessToken
+		   			window.location = "/fb_caller.php?i=logged&token="+token
 		   		}
-		   		// else show the user name on the screen
+		   		// if not logged in display the login button
+		   		if(response.status != "connected"){
+		   			var button = document.getElementById("fblogin")
+		   			button.style.display = "block";
+		   			button.onclick = () => $.ajax({
+			   				url : "/fb_caller.php",
+			   				type : 'GET',
+			   				dataType : 'JSON',
+			   				data : {
+			   					i: "login"
+			   				},
+			   				success: (data)=> window.location = data['uri'],
+			   				error: ()=> alert("there was something wrong!")
+			   		})
+		   		}
 		   	})
-		      
 		  };
 
 		  (function(d, s, id){
@@ -37,51 +52,15 @@
 		   }(document, 'script', 'facebook-jssdk'));
 		</script>
 
-
-
 	</head>
 
 	<body>
 
-	<?php
+	<!-- design this page -->
 
-		session_start();
-
-		require_once('./vendor/autoload.php');
-
-		$fb = new \Facebook\Facebook([
-		  'app_id' => '222413885297299',
-		  'app_secret' => '85e84df32c06c5801bba06f3710b3e0f',
-		  'default_graph_version' => 'v3.1',
-		]);
-
-		function fetchUserInfo($access_token, $fb){
-				try {
-				  $response = $fb->get('/me', $access_token);
-				} catch(\Facebook\Exceptions\FacebookResponseException $e) {
-				  // When Graph returns an error
-				  echo 'Graph returned an error: ' . $e->getMessage();
-				  exit;
-				} catch(\Facebook\Exceptions\FacebookSDKException $e) {
-				  // When validation fails or other local issues
-				  echo 'Facebook SDK returned an error: ' . $e->getMessage();
-				  exit;
-				}
-
-				$user = $response->getGraphUser();
-				echo $user->getName();
-		}
-
-		// trial with using given accesstoken
-
-		/*fetchUserInfo(
-			'EAADKSMSgUpMBAM1qnePSjUIUKZAKpeNDwI4bXx5NTmZAonRUt4AnYKZCVXlaFBupZCT2946msycXSXBO7hFMgYxrIFR49woUNJIU6lqK8frdXierjFI0PQRAASmWUZA58eg39AFUeKcKHPBqgzJQ4jq0n4dexIGtd9pTFZCQpzR83koeKbDCCp6lZANJ7b4oOhppZCzWURIILPXd7VZB1nB3Irr3rzv9zSg8NRgiIUADkAQZDZD', $fb
-		);*/
-
-		// next: how to fetch the access token
-	?>
-
-	<!-- first check if the user is already connected his/her account -->
+	<div id="fblogin" style="display: none;">
+		<button>Login with facebook account</button>
+	</div>
 
 	</body>
 </html>
