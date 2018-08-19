@@ -26,7 +26,10 @@
 		    FB.AppEvents.logPageView();
 		   	
 			let logout = document.getElementById("logoutButton")
-			logout.onclick = () => console.log("triggered")
+			logout.onclick = () => {
+				FB.logout()
+				(window.location = "/fb_caller.php?i=logout")
+			}
 		  };
 		  (function(d, s, id){
 		     var js, fjs = d.getElementsByTagName(s)[0];
@@ -40,7 +43,42 @@
 </head>
 <body>
 
+	<h1 id="user_name"></h1>
+
 	<button id="logoutButton">logout</button>
+
+	<div class="albums">
+		
+	</div>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$.ajax({
+			url: "/fb_caller.php",
+			type: 'GET',
+			dataType: 'JSON',
+			data: {
+				i: "info",
+			},
+			success: (data)=> $("#user_name").html(data.name+"'s albums"),
+			error: ()=> { 
+				document.write("there was some problem in loading your content")
+				console.log("there was some error")
+			}
+		});
+
+		$.ajax({
+			url: "/fb_caller.php",
+			type: 'GET',
+			dataType: 'JSON',
+			data: {
+				i : 'albums'
+			},
+			success: (data)=> console.log("success"),
+			error: ()=> console.log('error')
+		})
+	})
+</script>
 
 </body>
 </html>

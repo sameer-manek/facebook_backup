@@ -23,34 +23,28 @@ if($i == 'login'){
 
 
 if($i == 'info'){
-	
-	$response = array(
-		"info"=> $fb->get_user_info()
-	);
 
-	echo json_encode($response);
+	echo json_encode($fb->get_user_info());
 }
 
 if($i == 'albums'){
-	
-	$response = array(
-		"albums"=> $fb->get_user_albums()
-	);
 
-	echo json_encode($response);
+	echo json_encode($fb->get_user_albums());
 }
 
 
 if($i == 'photos'){
-	
-	$response = array(
-		"photos"=> $fb->get_user_photos($_REQUEST['album'])
-	);
 
-	echo json_encode($response);
+	echo json_encode($fb->get_photos($_REQUEST['album']));
 }
 
 if($i == "logged"){
 	$_SESSION['fb_access_token'] = $_REQUEST['token'];
 	header("location: /user.php");
+}
+
+if($i == "logout"){
+	session_unset($_SESSION['fb_access_token']);
+	session_destroy();
+	header("location: /");
 }

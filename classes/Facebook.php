@@ -26,7 +26,7 @@
 
 		// Todo : objectify callback
 
-		public function fetch_user_info(){
+		public function get_user_info(){
 			try {
 				$res = $this->fb->get("/me", $_SESSION['fb_access_token']);
 			} catch(Exception $e){
@@ -34,10 +34,10 @@
 				exit();
 			}
 
-			return $res;
+			return $res->getGraphObject()->asArray();
 		}
 
-		public function fetch_user_albums(){
+		public function get_user_albums(){
 			try {
 				$res = $this->fb->get("/me?fields=albums", $_SESSION['fb_access_token']);
 			} catch(Exception $e){
@@ -45,10 +45,10 @@
 				exit();
 			}
 
-			return $res;
+			return $res->getGraphObject()->asArray();
 		}
 
-		public function fetch_photos($album){
+		public function get_photos($album){
 			try {
 				$res = $this->fb->get("/".$album."/photos", $_SESSION['fb_access_token']);
 			} catch(Exception $e){
@@ -56,11 +56,7 @@
 				exit();
 			}
 
-			return $res;
+			return $res->getGraphObject()->asArray();
 		}
 
-	}
-
-	
-
-	
+	}	
