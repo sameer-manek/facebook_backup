@@ -32,10 +32,14 @@ if($i == 'albums'){
 	echo json_encode($fb->get_user_albums());
 }
 
+if($i == "album_info"){
+
+	echo json_encode($fb->get_album_info($_REQUEST['id']));
+}
 
 if($i == 'photos'){
 
-	echo json_encode($fb->get_photos($_REQUEST['album']));
+	echo json_encode($fb->get_photos($_REQUEST['id']));
 }
 
 if($i == "logged"){

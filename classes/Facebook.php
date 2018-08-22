@@ -39,7 +39,29 @@
 
 		public function get_user_albums(){
 			try {
-				$res = $this->fb->get("/me?fields=albums", $_SESSION['fb_access_token']);
+			  $response = $this->fb->get(
+			    '/me/albums?fields=picture,id,name',
+			    $_SESSION['fb_access_token']
+			  );
+			} catch(FacebookExceptionsFacebookResponseException $e) {
+			  echo 'Graph returned an error: ' . $e->getMessage();
+			  exit;
+			} catch(FacebookExceptionsFacebookSDKException $e) {
+			  echo 'Facebook SDK returned an error: ' . $e->getMessage();
+			  exit;
+			}
+			$edge = $response->getGraphEdge();
+			$nodes = array();
+			foreach ($edge as $node) {
+				$nodes[] = $node->asArray();
+			}
+
+			return $nodes;
+		}
+
+		public function get_album_info($album){
+			try {
+				$res = $this->fb->get("/".$album, $_SESSION['fb_access_token']);
 			} catch(Exception $e){
 				echo "there was some internal problem";
 				exit();
@@ -49,14 +71,23 @@
 		}
 
 		public function get_photos($album){
+			
+			// fetching photos :  {album-id}/photos?fields=picture
 			try {
-				$res = $this->fb->get("/".$album."/photos", $_SESSION['fb_access_token']);
+				$res = $this->fb->get("/".$album."/photos?fields=picture", $_SESSION['fb_access_token']);
 			} catch(Exception $e){
 				echo "there was some internal problem";
 				exit();
 			}
 
-			return $res->getGraphObject()->asArray();
+			$nodes = array();
+			$edge = $res->getGraphEdge();
+
+			foreach($edge as $node){
+				$nodes[] = $node->asArray();
+			}
+
+			return $nodes;
 		}
 
 	}	

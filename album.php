@@ -43,44 +43,54 @@
 </head>
 <body>
 
-	<h1 id="user_name"></h1>
+	<h1 id="album_name"></h1>
 
 	<button id="logoutButton">logout</button>
 
-	<div id="albums">
+	<div id="photos">
 		
 	</div>
 
+	<button id="gdrive_backup">backup on google drive</button>
+
+	<!-- todo : implement google drive api -->
+
 <script type="text/javascript">
+	// fetch album information
+
 	$(document).ready(function(){
 		$.ajax({
-			url: "/fb_caller.php",
+			url: '/fb_caller.php',
 			type: 'GET',
 			dataType: 'JSON',
-			data: {
-				i: "info",
-			},
-			success: (data)=> $("#user_name").html(data.name+"'s albums"),
-			error: ()=> { 
-				document.write("there was some problem in loading your content")
-				console.log("there was some error")
-			}
-		});
-
-		$.ajax({
-			url: "/fb_caller.php",
-			type: 'GET',
-			dataType: 'JSON',
-			data: {
-				i : 'albums'
+			data:{
+				i : 'album_info',
+				id : '<?php echo $_REQUEST['id']; ?>'
 			},
 			success: (data)=> {
+				$("#album_name").append(data.name)
+			},
+			error: ()=> {
+				console.log("this is useless!")
+			}
+		})
+
+		// fetching the photos in the album
+
+		$.ajax({
+			url: 'fb_caller.php',
+			type: 'GET',
+			dataType: 'JSON',
+			data: {
+				i: 'photos',
+				id : '<?php echo $_REQUEST['id']; ?>'
+			}, 
+			success: (data) => {
 				data.forEach(function(e){
-					let x = '<div class="album"><img src="'+e.picture.url+'"><a href="/album.php?id='+e.id+'" class="forward">'+e.name+'</p></div>';
-					$("#albums").append(x);
+					$("#photos").append('<img src="'+e.picture+'" /><br>')
 				})
 			},
-			error: ()=> console.log('error')
+			error: (data)=> console.log("there was some internal problem!")
 		})
 	})
 </script>
