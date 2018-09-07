@@ -1,7 +1,19 @@
 <?php
 
+	require_once('./vendor/autoload.php');
+
 	class Google{
-		$__private = 'qB75fL_yW70hgnusKHNkgJR8';
+		$__private = '{enter the private key}';
+		$__clientID = '{enter the client ID}';
+
+		private $google;
+		private $helper;
+
+		public function __construct(){
+			$this->google = new Google_Client();
+			$this->google->setApplicationName("rtcamp test application");
+			$this->google->setDeveloperKey('My developer key');
+		}
 	}
 
 ?>
