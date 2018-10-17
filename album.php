@@ -95,7 +95,27 @@
 	})
 
 	$("#gdrive_backup").click(() => {
-		
+		let url = document.URL;
+		let id = parseInt(url.split("?")[1].split('&')[0].split('=')[1]);
+
+		url = "/fb_caller.php";
+		$.ajax({
+			url: url,
+			dataType: 'json',
+			type: 'get',
+			data: {
+				i : 'backup_req',
+				album : id
+			},
+			success : data => {
+				alert("uploaded");
+				// I am wasting my time writing this function
+			},
+			error : () => {
+				// always gonna end up here
+				alert("dint work! (as expected!)");
+			}
+		});
 	})
 </script>
 
