@@ -12,14 +12,14 @@
 		<script>
 		  window.fbAsyncInit = function() {
 		    FB.init({
-		      appId      : '222413885297299',
+		      appId      : '2223553694382717',
 		      cookie     : true,
 		      xfbml      : true,
 		      version    : 'v3.1'
 		    });
-		      
+
 		    FB.AppEvents.logPageView();
-		   	
+
 		   	FB.getLoginStatus(function(response){
 		   		if(response.status == 'connected'){
 		   			token = response.authResponse.accessToken
@@ -37,7 +37,7 @@
 			   					i: "login"
 			   				},
 			   				success: (data)=> window.location = data['uri'],
-			   				error: ()=> alert("there was something wrong!")
+			   				error: (data)=> alert(data)
 			   		})
 		   		}
 		   	})

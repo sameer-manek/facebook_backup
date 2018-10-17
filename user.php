@@ -17,14 +17,14 @@
 	<script>
 		   window.fbAsyncInit = function() {
 		    FB.init({
-		      appId      : '222413885297299',
+		      appId      : '2223553694382717',
 		      cookie     : true,
 		      xfbml      : true,
 		      version    : 'v3.1'
 		    });
-		      
+
 		    FB.AppEvents.logPageView();
-		   	
+
 			let logout = document.getElementById("logoutButton")
 			logout.onclick = () => {
 				FB.logout()
@@ -48,7 +48,7 @@
 	<button id="logoutButton">logout</button>
 
 	<div id="albums">
-		
+
 	</div>
 
 <script type="text/javascript">
@@ -61,9 +61,8 @@
 				i: "info",
 			},
 			success: (data)=> $("#user_name").html(data.name+"'s albums"),
-			error: ()=> { 
-				document.write("there was some problem in loading your content")
-				console.log("there was some error")
+			error: ()=> {
+				console.log("some problem occured")
 			}
 		});
 

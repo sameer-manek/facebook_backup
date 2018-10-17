@@ -22,9 +22,9 @@
 		      xfbml      : true,
 		      version    : 'v3.1'
 		    });
-		      
+
 		    FB.AppEvents.logPageView();
-		   	
+
 			let logout = document.getElementById("logoutButton")
 			logout.onclick = () => {
 				FB.logout()
@@ -48,7 +48,7 @@
 	<button id="logoutButton">logout</button>
 
 	<div id="photos">
-		
+
 	</div>
 
 	<button id="gdrive_backup">backup on google drive</button>
@@ -84,7 +84,7 @@
 			data: {
 				i: 'photos',
 				id : '<?php echo $_REQUEST['id']; ?>'
-			}, 
+			},
 			success: (data) => {
 				data.forEach(function(e){
 					$("#photos").append('<img src="'+e.picture+'" /><br>')
@@ -92,6 +92,10 @@
 			},
 			error: (data)=> console.log("there was some internal problem!")
 		})
+	})
+
+	$("#gdrive_backup").click(() => {
+		
 	})
 </script>
 

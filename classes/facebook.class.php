@@ -9,8 +9,8 @@
 
 		public function __construct(){
 			$this->fb = new \Facebook\Facebook([
-			  'app_id' => '222413885297299',
-			  'app_secret' => '85e84df32c06c5801bba06f3710b3e0f',
+			  'app_id' => '2223553694382717',
+			  'app_secret' => 'f96ad3b1cd5a859e15482d042ba0a47c',
 			  'default_graph_version' => 'v3.1',
 			]);
 
@@ -19,7 +19,7 @@
 
 		public function Login(){
 			$permissions = ['user_photos'];
-			$loginUrl = $this->helper->getLoginUrl('https://facebook.rtc/callback.php', $permissions);
+			$loginUrl = $this->helper->getLoginUrl('https://fbrtc.sameer-manek.com', $permissions);
 
 			return $loginUrl;
 		}
@@ -71,7 +71,7 @@
 		}
 
 		public function get_photos($album){
-			
+
 			// fetching photos :  {album-id}/photos?fields=picture
 			try {
 				$res = $this->fb->get("/".$album."/photos?fields=picture", $_SESSION['fb_access_token']);
@@ -90,4 +90,4 @@
 			return $nodes;
 		}
 
-	}	
+	}
