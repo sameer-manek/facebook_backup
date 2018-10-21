@@ -76,6 +76,7 @@ if($i == "logged"){
 
 if($i == "logout"){
 	session_unset($_SESSION['fb_access_token']);
+  session_unset($_SESSION['google_access_token']);
 	session_destroy();
 	header("location: /");
 }

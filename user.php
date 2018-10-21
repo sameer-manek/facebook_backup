@@ -25,11 +25,12 @@
 
 		    FB.AppEvents.logPageView();
 
-			let logout = document.getElementById("logoutButton")
-			logout.onclick = () => {
-				FB.logout()
-				(window.location = "/fb_caller.php?i=logout")
-			}
+				let logout = document.getElementById("logoutButton")
+				logout.onclick = function() {
+					FB.logout().then(
+						window.location = "/fb_caller?i=logout"
+					);
+				}
 		  };
 		  (function(d, s, id){
 		     var js, fjs = d.getElementsByTagName(s)[0];

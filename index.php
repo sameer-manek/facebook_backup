@@ -2,6 +2,9 @@
 <html>
 	<head>
 		<title>facebook tool</title>
+		<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
 
 		<!-- JQuery -->
 
@@ -52,14 +55,68 @@
 		   }(document, 'script', 'facebook-jssdk'));
 		</script>
 
+		<style media="screen">
+
+			html,body {
+				height: 100%;
+				background: linear-gradient(to bottom, #DDD, #EEE, white);
+			}
+
+			.title {
+				text-align: center;
+			}
+
+			button.is-blue{
+				background-color: #3B5998;
+				color: white;
+				border: 0px;
+				outline: 0px;
+				padding: 4px 10px;
+				margin: 0 auto;
+				transition: 0.2s;
+			}
+
+			button.is-blue:hover {
+				background-color: #8B9DC3;
+				color: white;
+				transition: 0.2s;
+			}
+
+			div.doc{
+				width: 80%;
+				margin: 0 auto;
+				text-align: center
+
+			}
+
+			hr{
+				height: 2px;
+				background: black;
+				color: black;
+			}
+		</style>
+
 	</head>
 
 	<body>
 
 	<!-- design this page -->
+	<h1 class="title" style="padding: 7px 0;">Facebook album backup tool</h1>
 
-	<div id="fblogin" style="display: none;">
-		<button>Login with facebook account</button>
+	<div class="box doc">
+		<h2 class="title is-4">How this works</h2>
+		<hr />
+
+		<p>If you are take a lot of pictures and want to keep them safe on your google drive, this is the tool my friend!</p>
+
+		<p>Using this is simple, just login with your facebook account using the button below. You will be shown a list of all your albums, which you will be able to browse and backup to your google drive.</p>
+
+
+		<div id="fblogin" style="display: none; margin: 10px 0;">
+			<button class="button is-blue">Login with facebook account</button>
+		</div>
+
+		<p><b>Your privacy is not harmed!</b></p><p>Make a note that We do not intend to collect or use any of your information on our server. Moreover, this is a completely open source application, so you can watch the code for yourself <a target="_blank" href="https://github.com/sameer-manek/facebook_backup">here</a>. You are also welcomed to improve the code!</p>
 	</div>
 
 	</body>

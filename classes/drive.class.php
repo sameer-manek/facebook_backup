@@ -1,108 +1,80 @@
 <?php
+
 class Drive{
 
-	//variables
-	private $fileRequest;
-	private $mimeType;
-	private $filename;
-	private $path;
-	private $client;
+    private $fileRequest;
+    private $mimeType;
+    private $filename;
+    private $path;
+    private $client;
 
 
-	public function __construct($client){
+    public function __construct($client){
         // implementing a simple copy constructor!
-		$this->client = $client;
-	}
+        $this->client = $client;
+    }
 
+    public function init($file){
+        $client = $this->client; 
+	$client->refreshToken($refreshToken);
+	$tokens = $client->getAccessToken();
+	$client->setAccessToken($tokens);
+	$client->setDefer(true);
+	$this->processFile($file);
+    }
 
-	public function initialize($node){
-		//$this->fileRequest = './temp/jpg';
-		$refreshToken = $_SESSION['google_access_token']['refresh_token'];
-		$this->client->refreshToken($refreshToken);
-		$tokens = $this->client->getAccessToken();
-		$this->client->setAccessToken($tokens);
+    public function processFile($fileRequest){
+        $path_parts = pathinfo($fileRequest);
+	$this->path = $path_parts['dirname'];
+	$this->fileName = $path_parts['basename'];
+	$finfo = finfo_open(FILEINFO_MIME_TYPE);
+	$this->mimeType = finfo_file($finfo, $fileRequest);
+	finfo_close($finfo);
+	echo "Mime type is " . $this->mimeType . "\n";
+	$this->upload($fileRequest);
+    }
 
-		$this->client->setDefer(true);
-		// download file
-		$url = $node['picture'];
+    public function upload($fileRequest){
+        $client = $this->client;
+        $chunksize = 1*1024*1024; // 1 MB
+        $file = new Google_Service_Drive_DriveFile(array(
+            'name' => $this.filename
+        ));
+        
+        $mimetype = $this->mimeType;
+        
+        $service = new Google_Service_Drive($client);
+        $request = $service->files->insert($file);
 
-		$curlCh = curl_init();
-		curl_setopt($curlCh, CURLOPT_URL, $url);
-		curl_setopt($curlCh, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($curlCh, CURLOPT_SSLVERSION,3);
-		$curlData = curl_exec ($curlCh);
-		curl_close ($curlCh);
+        $media = new Google_Http_MediaFileUpload(
+	    $client,
+	    $request,
+	    $mimeType,
+	    null,
+	    true,
+	    $chunkSizeBytes
+        );
 
-		$downloadPath = __DIR__."/temp/temp.jpg";
-		$file = fopen($downloadPath, "w+");
-		fputs($file, $curlData);
-		fclose($file);
-		//
-		$this->processFile();
-	}
+        $media->setFileSize(filesize($fileRequest));
+        $status = false;
+        // handling high res images (4k, HDR, etc)
+        $handle = fopen($fileRequest, "rb");
 
-	public function processFile(){
-		$fileRequest = $this->fileRequest;
-		$this->path = __DIR__."/temp/temp.jpg";
-		$this->fileName = "temp.jpg";
-		$finfo = finfo_open(FILEINFO_MIME_TYPE);
-		$this->mimeType = "image/jpeg";
-		finfo_close($finfo);
+        while(!status && !feof($handle)){
+            // processing 1MB at a time
+            $chunk = fread($handle, $chunksize);
+            $status = $media->nextChunk($chunk);
+        }
 
-		echo "Mime type is " . $this->mimeType . "\n";
+        $result = false;
+        if($status != false){
+            $result = $status; // Just in case something unexpected shows up.
+        }
 
-		$this->upload();
+        fclose($handle);
 
-	}
-
-	public function upload(){
-		$client = $this->client;
-
-		$file = new Google_Service_Drive_DriveFile();
-		$file->title = $this->fileName;
-		$chunkSizeBytes = 1 * 1024 * 1024;
-
-		$fileRequest = $this->fileRequest;
-		$mimeType = $this->mimeType;
-
-		$service = new Google_Service_Drive($client);
-		$request = $service->files->insert($file);
-		// Create a media file upload to represent our upload process.
-		$media = new Google_Http_MediaFileUpload(
-		  $client,
-		  $request,
-		  $mimeType,
-		  null,
-		  true,
-		  $chunkSizeBytes
-		);
-		$media->setFileSize(filesize($fileRequest));
-		// Upload the various chunks. $status will be false until the process is
-		// complete.
-        // maybe I should consider using an async task queue on redis in version 1.1 :P But, rn, I just want the job!
-		$status = false;
-		$handle = fopen($fileRequest, "rb");
-
-		// start uploading
-		echo "Uploading: " . $this->fileName . "\n";
-
-		$filesize = filesize($fileRequest);
-
-		// while not reached the end of file marker keep looping and uploading chunks
-		while (!$status && !feof($handle)) {
-			$chunk = fread($handle, $chunkSizeBytes);
-			$status = $media->nextChunk($chunk);
-		}
-
-		// The final value of $status will be the data from the API for the object
-		// that has been uploaded.
-		$result = false;
-		if($status != false) {
-		  $result = $status;
-		}
-		fclose($handle);
-		// Reset to the client to execute requests immediately in the future.
-		$client->setDefer(false);
-	}
+        $client->setDefer(false);
+        return true;
+    }
 
 }
