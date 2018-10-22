@@ -9,7 +9,7 @@
  *      SIMPLE!
  * */
     
-require_once "../classes/drive.class.php";
+require_once __DIR__."/../classes/drive.class.php";
 
     $worker = new GearmanWorker();
     $worker-> addServer('localhost');
@@ -18,18 +18,24 @@ require_once "../classes/drive.class.php";
 
     $worker->addFunction('upload', 'uploader');
 
+    while($worker->work());
+
     function downloader($job){
         // downloads the images from facebook
         $data = unserialize($job->workload()); // receives serialized data
         $url = $data->url;
+        $log = __DIR__.'/worker.log';
         $file = rand().'.jpg';
         $saveto  = __DIR__.'/tmp/'.$file;
         $ch = curl_init($url);
+        $handleLog = fopen($log, 'a');
+        fwrite($handleLog, "started downloading from source: ".$url);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_BINARYTRANSFER,1);
         $raw=curl_exec($ch);
         curl_close ($ch);
+        fwrite($handle, "downloaded ".$url." as ".$saveto);
         if(file_exists($saveto)){
             unlink($saveto);
         }
@@ -41,15 +47,20 @@ require_once "../classes/drive.class.php";
         $client->addServer();
         $data['file'] = $saveto;
         return $client->doNormal('upload', serialize($data)); // ensure synchronous dispatch
-
+        fclose($handleLog);
         // can implement a post request return call, to denote a loading point on a loading bar.
     }
 
     function uploader($job){
+        $log = __DIR__.'/worker.log';
+        $handleLog = fopen($log, 'a');
+        fwrite($handleLog, "unloading data");
         $data = unserialize($job->workload());
         $file = $data->file;
         $google = $data->google; 
-        $drive = new Drive($google);
+        $drive = new Drive($data);
+        fwrite($handleLog, "create drive obj, moving your files");
+        fclose($handleLog);
         return $drive->init($file); // returns boolean
     }
 ?>

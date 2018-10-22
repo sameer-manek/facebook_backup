@@ -12,7 +12,7 @@ require_once './classes/drive.class.php';
 
 $fb = new Facebook();
 $google = new Google();
-$drive = new Drive($google->getAgent());
+//$drive = new Drive($google->getAgent());
 
 $i = $_REQUEST['i'];
 
@@ -54,7 +54,7 @@ if($i == "backup_req"){
       header("location: ".filter_var($agent->createAuthUrl(), FILTER_SANITIZE_URL));
   }
 
-  // upload files
+  $google->uploadAlbum($fb, $_REQUEST['album']);
 
 }
 
@@ -67,6 +67,10 @@ if($i == "google_callback"){
     }
     //var_dump($_SESSION);
     $google->uploadAlbum($fb, $_SESSION['album_temp']);
+}
+
+if($i == "hook"){
+    exec("git pull origin master");
 }
 
 if($i == "logged"){

@@ -2,7 +2,7 @@
 
     require_once('./vendor/autoload.php');
     //require_once('./vendor/google/apiclient/src/Google/autoload.php');
-    require_once('drive.class.php');
+    //require_once('drive.class.php');
 
     class Google{
 	private $google;
@@ -26,17 +26,19 @@
 	    return $this->google;
 	}
 
-	public function uploadAlbum($fb, $google, $album){
+	public function uploadAlbum($fb, $album){
 	    $nodes = $fb->get_photos($album);
-	    $drive = new Drive($this->getAgent());
             $client = new GearmanClient();
             $client->addServer();
             foreach ($nodes as $node) {
+                echo "processing ".$node['picture'];
                 // creating the array here
                 $url = $node["picture"];
                 $obj = array();
                 $obj['url'] = $url;
-                $obj['google'] = $google;
+                $obj['google_client_id'] = $this->clientId;
+                $obj['google_client_secret'] = $this->clientSecret;
+                $obj['google_access_token'] = $_SESSION['google_access_token'];
                 // stack the tasks
                 $client->addTask('init', serialize($obj));
 	    }

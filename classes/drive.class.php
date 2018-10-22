@@ -1,7 +1,7 @@
 <?php
 
 class Drive{
-
+    
     private $fileRequest;
     private $mimeType;
     private $filename;
@@ -9,9 +9,18 @@ class Drive{
     private $client;
 
 
-    public function __construct($client){
+    public function __construct($obj){
         // implementing a simple copy constructor!
-        $this->client = $client;
+        print_r($obj);
+        $this->client = new Google_Client();
+	$this->client->setApplicationName("fb album backup tool");
+	$this->client->setClientId($obj['google_client_id']);
+	$this->client->setClientSecret($obj['google_client_secret']);
+	$this->client->setRedirectUri("https://fbrtc.sameer-manek.com/fb_caller.php?i=google_callback");
+	$this->client->setScopes(array('https://www.googleapis.com/auth/drive.file'));
+	$this->client->setAccessType("offline");
+	$this->client->setApprovalPrompt('force');
+
     }
 
     public function init($file){
