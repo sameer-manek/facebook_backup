@@ -23,7 +23,7 @@ require_once __DIR__."/../classes/drive.class.php";
     function downloader($job){
         // downloads the images from facebook
         $data = unserialize($job->workload()); // receives serialized data
-        $url = $data->url;
+        $url = $data['url'];
         $log = __DIR__.'/worker.log';
         $file = rand().'.jpg';
         $saveto  = __DIR__.'/tmp/'.$file;
@@ -35,7 +35,7 @@ require_once __DIR__."/../classes/drive.class.php";
         curl_setopt($ch, CURLOPT_BINARYTRANSFER,1);
         $raw=curl_exec($ch);
         curl_close ($ch);
-        fwrite($handle, "downloaded ".$url." as ".$saveto);
+        fwrite($handleLog, "downloaded ".$url." as ".$saveto);
         if(file_exists($saveto)){
             unlink($saveto);
         }

@@ -7,11 +7,11 @@ if(!session_id()) {
 }
 
 require_once './classes/facebook.class.php';
-require_once './classes/google.class.php';
+//require_once './classes/google.class.php';
 require_once './classes/drive.class.php';
 
 $fb = new Facebook();
-$google = new Google();
+$google = new Drive(); // google.class.php no longer required
 //$drive = new Drive($google->getAgent());
 
 $i = $_REQUEST['i'];
@@ -47,15 +47,14 @@ if($i == 'photos'){
 }
 
 if($i == "backup_req"){
-  $agent = $google->getAgent();
+    $agent = $google->getAgent();
   if(!isset($_SESSION['google_access_token'])){
-      // store the album in session
-      $_SESSION['album_temp'] = $_REQUEST['album'];
-      header("location: ".filter_var($agent->createAuthUrl(), FILTER_SANITIZE_URL));
+      //store the album in session
+    $_SESSION['album_temp'] = $_REQUEST['album'];
+    header("location: ".filter_var($agent->createAuthUrl(), FILTER_SANITIZE_URL));
   }
 
   $google->uploadAlbum($fb, $_REQUEST['album']);
-
 }
 
 if($i == "google_callback"){
@@ -65,12 +64,8 @@ if($i == "google_callback"){
         $res = $google->getAgent()->authenticate($code); // hope this works
         $_SESSION['google_access_token'] = $google->getAgent()->getAccessToken();
     }
-    //var_dump($_SESSION);
     $google->uploadAlbum($fb, $_SESSION['album_temp']);
-}
-
-if($i == "hook"){
-    exec("git pull origin master");
+    echo json_encode([message=> "hello"]);
 }
 
 if($i == "logged"){

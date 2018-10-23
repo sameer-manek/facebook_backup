@@ -24,10 +24,12 @@
 	public function getAgent(){
 	    // get the google api agent
 	    return $this->google;
-	}
+        }
 
-	public function uploadAlbum($fb, $album){
-	    $nodes = $fb->get_photos($album);
+        
+
+        public function uploadAlbum($fb, $album){
+            $nodes = $fb->get_photos($album);
             $client = new GearmanClient();
             $client->addServer();
             foreach ($nodes as $node) {
@@ -41,8 +43,9 @@
                 $obj['google_access_token'] = $_SESSION['google_access_token'];
                 // stack the tasks
                 $client->addTask('init', serialize($obj));
-	    }
-	}
+            }
+            $client->runTasks();
+        }
     }
 
 ?>

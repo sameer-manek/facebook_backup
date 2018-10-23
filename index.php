@@ -40,7 +40,7 @@
 			   					i: "login"
 			   				},
 			   				success: (data)=> window.location = data['uri'],
-			   				error: (data)=> alert(data)
+			   				error: (data)=> alert("could not fetch the URL")
 			   		})
 		   		}
 		   	})
