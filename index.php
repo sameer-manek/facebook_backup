@@ -24,8 +24,10 @@
 		    FB.AppEvents.logPageView();
 
 		   	FB.getLoginStatus(function(response){
+				console.log(response);
 		   		if(response.status == 'connected'){
 		   			token = response.authResponse.accessToken
+					console.log(token)
 		   			window.location = "/fb_caller.php?i=logged&token="+token
 		   		}
 		   		// if not logged in display the login button
