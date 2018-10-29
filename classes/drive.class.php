@@ -49,13 +49,15 @@ class Drive{
     }
 
     public function init($file){
+        $at = $_SESSION['google_access_token']['access_token'];
         $this->fileRequest = $file;
         $client = $this->client;
     	$client->refreshToken($refreshToken);
     	$tokens = $client->getAccessToken();
     	$client->setAccessToken($tokens);
     	$client->setDefer(true);
-    	$this->processFile($file);
+        $this->client->setAccessToken($at);
+    	$this->processFile();
     }
 
     public function processFile(){
@@ -67,51 +69,25 @@ class Drive{
     	$this->mimeType = finfo_file($finfo, $fileRequest);
     	finfo_close($finfo);
     	echo "Mime type is " . $this->mimeType . "\n";
-    	$this->upload($fileRequest);
+    	$this->upload();
     }
 
     public function upload(){
-        $fileRequest = $this->fileRequest;
-        $client = $this->client;
-        $chunksize = 1*1024*1024; // 1 MB
-        $file = new Google_Service_Drive_DriveFile(array(
-            'name' => $this.filename
-        ));
-
-        $mimetype = $this->mimeType;
-
         $service = new Google_Service_Drive($client);
-        $request = $service->files->insert($file);
 
-        $media = new Google_Http_MediaFileUpload(
-	    $client,
-	    $request,
-	    $mimeType,
-	    null,
-	    true,
-	    $chunkSizeBytes
-        );
+        //Insert a file
+        $file = new Google_Service_Drive_DriveFile();
+        $file->setName(rand().'.jpg');
+        $file->setDescription('A test document');
+        $file->setMimeType('image/jpeg');
 
-        $media->setFileSize(filesize($fileRequest));
-        $status = false;
-        // handling high res images (4k, HDR, etc)
-        $handle = fopen($fileRequest, "rb");
+        $data = file_get_contents($this->fileRequest);
 
-        while(!status && !feof($handle)){
-            // processing 1MB at a time
-            $chunk = fread($handle, $chunksize);
-            $status = $media->nextChunk($chunk);
-        }
-
-        $result = false;
-        if($status != false){
-            $result = $status; // Just in case something unexpected shows up.
-        }
-
-        fclose($handle);
-
-        $client->setDefer(false);
-        return true;
+        $createdFile = $service->files->create($file, array(
+              'data' => $data,
+              'mimeType' => 'image/jpeg',
+              'uploadType' => 'multipart'
+        ));
     }
 
 }

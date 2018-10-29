@@ -21,17 +21,19 @@ require_once __DIR__."/../classes/drive.class.php";
     function downloader($job){
         $url = $job->workload();
         $saveto = __DIR__."/tmp/".rand().".jpg";
-
+        $log = fopen("./worker.log", "a");
         $data = file_get_contents($url);
-
+        fwrite($log, "downloaded contents from ".$url."\n");
         $file = fopen($saveto, "w+");
         fwrite($file, $data);
         fclose($file);
-
+        fwrite($log, "stored contents to ".$saveto."\n");
         // upload the file
-
-        $client = Drive::getObj();
-
+        fwrite($log, "starting upload to the drive\n");
+        $client = Drive::getInstance();
+        $client->init($saveto);
+        fwrite($log, "uploaded to user's drive\n");
+        fclose($log);
     }
 
 
