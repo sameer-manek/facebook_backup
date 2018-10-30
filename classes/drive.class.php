@@ -43,16 +43,33 @@ class Drive{
             $client = new GearmanClient();
             $client->addServer();
             foreach ($nodes as $node) {
-                $client->addTask('init', $node['picture']);
+                //$client->addTask('init', $node['picture']);
+                try{
+                    $data = file_get_contents($node['picture']);
+                    $saveto = __DIR__."/../scripts/tmp/".rand().".jpg";
+
+                    $file = fopen($saveto, "w+");
+                    fwrite($file, $data);
+                    fclose($file);
+
+                    $this->init($saveto);
+                    echo "uploaded ".$saveto."\n";
+                } catch(Exception $e) {
+                    return false;
+                }
+               
             }
-            $client->runTasks();
+
+            return true;
+            //$client->runTasks();
     }
 
     public function init($file){
         $at = $_SESSION['google_access_token']['access_token'];
+        $this->client->setAccessToken($at);
         $this->fileRequest = $file;
         $client = $this->client;
-    	$client->refreshToken($refreshToken);
+    	//$client->refreshToken($_SESSION['google_access_token']['refreshToken']);
     	$tokens = $client->getAccessToken();
     	$client->setAccessToken($tokens);
     	$client->setDefer(true);
@@ -68,16 +85,15 @@ class Drive{
     	$finfo = finfo_open(FILEINFO_MIME_TYPE);
     	$this->mimeType = finfo_file($finfo, $fileRequest);
     	finfo_close($finfo);
-    	echo "Mime type is " . $this->mimeType . "\n";
     	$this->upload();
     }
 
     public function upload(){
-        $service = new Google_Service_Drive($client);
-
+        $client = $this->client;
+        $service = new Google_Service_Drive($this->client);
         //Insert a file
         $file = new Google_Service_Drive_DriveFile();
-        $file->setName(rand().'.jpg');
+        $file->setName($this->fileName.'.jpg');
         $file->setDescription('A test document');
         $file->setMimeType('image/jpeg');
 
